@@ -1,11 +1,22 @@
-#Zhiyu 2018Oct24
-#takes prameters 1. mode(1 for brainwave midi transformation,2 for regular midi file transformation) 
-#2.for mode 1,specify channel,sample rate (to construct input filename),seperate by comma; for mode 2, specify input filename
-#3&4.lower/upper bound (int) for pitch coding (default 1-88 if not provided)
+'''
 
-#tested and works for brainwave-midi, need verification for regular midi
-#tested for regular midi, works but a little weird
-#for some reason some of the note durations are 0 in the midi file
+Author: Zhiyu Yang
+Last modified: 10/24/2018
+
+This moudle is for converting midi file to mat
+
+	- It takes parameters:
+
+	1. mode(1 for brainwave midi transformation,2 for regular midi file transformation)
+	2.for mode 1,specify channel,sample rate (to construct input filename),seperate by comma; for mode 2, specify input filename
+	3&4.lower/upper bound (int) for pitch coding (default 1-88 if not provided)
+
+	- tested and works for brainwave-midi, need verification for regular midi
+	- tested for regular midi, works but a little weird
+	- for some reason some of the note durations are 0 in the midi file
+	
+'''
+
 import sys
 import numpy as np
 #from music21 import midi

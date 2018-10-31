@@ -1,11 +1,12 @@
 '''
 
-Author: Zhiyu
+Author: Zhiyu Yang
 
-translating brainwave to midi music
-tested for txt coded brainwave signals.
-works but quite messy output
-new update with svd denoising (15%)
+This moudle is for translating brainwave to midi music
+
+	- tested for txt coded brainwave signals.
+	- works but quite messy output
+	- new update with svd denoising (15%)
 
 '''
 
