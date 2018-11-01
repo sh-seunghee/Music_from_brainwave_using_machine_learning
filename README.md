@@ -1,7 +1,7 @@
 # CS501_GroupProject
-####This is the repository created for the CS501 class group project.
+#### This is the repository created for the CS501 class group project.
 
-######For each of files, we haven't specified dependencies yet, so it is required to **manually install the libraries used by the system**.
+###### For each of files, we haven't specified dependencies yet, so it is required to **manually install the libraries used by the system**.
 
 
 > To run the system GUI, run musicApp.py.
