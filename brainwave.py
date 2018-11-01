@@ -1,17 +1,14 @@
 '''
-
 Author: Zhiyu Yang
+Last modified: 09/13/2018
 
 This moudle is for translating brainwave to midi music
 
 	- tested for txt coded brainwave signals.
 	- works but quite messy output
 	- new update with svd denoising (15%)
-
 '''
 
-#Zhiyu 2018Sep13
-#
 
 #########loading data function needed
 import numpy as np

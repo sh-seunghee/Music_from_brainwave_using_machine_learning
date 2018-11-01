@@ -1,5 +1,4 @@
 '''
-
 Author: Zhiyu Yang
 Last modified: 10/24/2018
 
@@ -14,7 +13,6 @@ This moudle is for converting midi file to mat
 	- tested and works for brainwave-midi, need verification for regular midi
 	- tested for regular midi, works but a little weird
 	- for some reason some of the note durations are 0 in the midi file
-	
 '''
 
 import sys
