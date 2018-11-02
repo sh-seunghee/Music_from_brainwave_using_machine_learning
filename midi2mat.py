@@ -73,8 +73,8 @@ def midi2mat(filename,upper=88,lower=1):
 		layer = np.zeros((len(INFO[i]["pitch"]),upper+2))
 		for j in range(0,len(INFO[i]["pitch"])):
 			layer[j][int(INFO[i]["pitch"][j])-1] = INFO[i]["velocity"][j]
-		layer[j][upper] = INFO[i]["duration"][j]
-		layer[j][upper+1] = INFO[i]["channel"][j]
+			layer[j][upper] = INFO[i]["duration"][j]
+			layer[j][upper+1] = INFO[i]["channel"][j]
 		OUTPUT.append(layer)
 	return(OUTPUT)
 
