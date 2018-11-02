@@ -1,6 +1,6 @@
 '''
 Author: Zhiyu Yang
-Last modified: 10/24/2018
+Last modified: 11/02/2018
 
 This moudle is for converting midi file to mat
 
