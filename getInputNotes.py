@@ -20,7 +20,7 @@ def get_input_notes():
     #brainwave music file has notes in a flat structure
     notes_to_parse = midi.flat.notes
     
-    for element in flat_notes:
+    for element in notes_to_parse:
         #parse notes
         if isinstance(element, notes_to_parse):
             notes.append(str(element.pitch))
