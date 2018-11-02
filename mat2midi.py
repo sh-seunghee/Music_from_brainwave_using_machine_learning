@@ -1,9 +1,15 @@
-#takes a n*m 2D mat as input, where n denotes the number of notes and m denotes range of pitch + duration and channel
-#takes the output filename as input 
-#it wirtes a midi music to file as well as returns a midi object
-#since the input midi for training is actually rescaled when going through midi2mat.py, the input for midi2mat.py and the output for this script are nor exact the same
-#for some reason the output of this script is always played by some weird instruments on my pc, it doesn't sound good from my side. 
-#But this should depend on the software and setting of your midi player
+'''
+Author: Zhiyu Yang
+Last modified: 11/02/2018
+This moudle converts 2D array from network output into midi file
+	
+	takes a n*m 2D mat as input, where n denotes the number of notes and m denotes range of pitch + duration and channel
+	takes the output filename as input 
+	it wirtes a midi music to file as well as returns a midi object
+	since the input midi for training is actually rescaled when going through midi2mat.py, the input for midi2mat.py and the output for this script are nor exact the same
+	for some reason the output of this script is always played by some weird instruments on my pc, it doesn't sound good from my side. 
+	But this should depend on the software and setting of your midi player
+'''
 
 def mat2midi(mat,name,SampleRate):
 	from midiutil.MidiFile import MIDIFile  #incase
