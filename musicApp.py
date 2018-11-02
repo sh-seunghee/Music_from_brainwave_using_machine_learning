@@ -25,7 +25,7 @@ from tkinter.filedialog import askopenfilename
 import os
 from musicPlayer import *
 
-from brainwave import brainwave_to_melody
+from brainwave2midi import brainwave_to_melody
 
 LABELBG = '#b5b5b5'
 
