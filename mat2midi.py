@@ -1,8 +1,3 @@
-#Zhiyu Yang
-#11/02/2018
-
-#This method transfers 2D arrays output from the network into midi file
-
 #takes a n*m 2D mat as input, where n denotes the number of notes and m denotes range of pitch + duration and channel
 #takes the output filename as input 
 #it wirtes a midi music to file as well as returns a midi object
