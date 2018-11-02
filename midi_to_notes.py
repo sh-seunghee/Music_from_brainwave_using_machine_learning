@@ -1,7 +1,7 @@
 '''
     Author: Hyeonae Jang
     Last modified: 11/01/2018
-    This moudle is to generate parsed form of notes and chord of music(midi file)
+    This moudle is to generate parsed notes and chord of music(midi file)
     '''
 
 import pickle
