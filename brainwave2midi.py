@@ -1,12 +1,15 @@
 '''
 Author: Zhiyu Yang
-Last modified: 09/13/2018
+Last modified: 11/20/2018
 
 This moudle is for translating brainwave to midi music
 
 	- tested for txt coded brainwave signals.
 	- works but quite messy output
 	- new update with svd denoising (15%)
+	- new update with fourier frequency filter
+	- new update to with bdf/edf format EEG preprocessing (mostly for training purpose)
+	- new update with pitch duration adjustment 
 '''
 
 
@@ -14,15 +17,29 @@ This moudle is for translating brainwave to midi music
 import numpy as np
 from midiutil.MidiFile import MIDIFile
 from numpy.linalg import svd  #try to use svd to denoise the data before transformation
+import pyedflib
+from scipy.fftpack import rfft, irfft, fftfreq # for fourier transformation
 #--------
+
+def BDF2CSV(filename):
+	import pyedflib
+	import numpy as np
+	f = pyedflib.EdfReader(filename)
+	n = f.signals_in_file
+	signal_labels = f.getSignalLabels()
+	sig = np.zeros((n, f.getNSamples()[0]))
+	for i in np.arange(n):
+		sig[i, :] = f.readSignal(i)
+	return(sig)
 
 def brainwave_to_melody(_filename, _nChannal, _sampleRate):
 
 	filename = _filename
 	nChannal = _nChannal
 	SampleRate = _sampleRate
-
-	data = np.loadtxt(filename,delimiter = ",")
+	
+	data = BDF2CSV(filename)
+	#data = np.loadtxt(filename,delimiter = ",")
 
 	[a,b] = data.shape
 	for i in range (0,a):
@@ -36,7 +53,17 @@ def brainwave_to_melody(_filename, _nChannal, _sampleRate):
 	data = data[nChannal,:]
 
 	#data = data - np.mean(data)
-
+	
+	# Fourier transformation and frequency filter (mean+-1sd)
+	from scipy.fftpack import rfft, irfft, fftfreq
+	W = fftfreq(data.size)
+	signal = rfft(data)
+	a = np.mean(W) - np.std(W)
+	b = np.mean(W) + np.std(W)
+	signal[(W<a)] = 0
+	signal[(W>b)] = 0
+	data = irfft(signal)
+	
 	#------------
 
 	length = len(data)
@@ -67,6 +94,10 @@ def brainwave_to_melody(_filename, _nChannal, _sampleRate):
 	nTime = Timefb2 - Timefb1
 
 	duration = np.divide(nTime,SampleRate,dtype = "float")
+	a = np.mean(duration) + np.std(duration)
+	b = np.mean(duration) - np.std(duration)
+	duration[(duration>a)] = np.mean(duration)
+	duration[(duration<b)] = np.mean(duration)
 	freq = np.divide(SampleRate,nTime,dtype = "float") #need to be elementwise operation, varification needed
 	#works
 
