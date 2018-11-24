@@ -37,6 +37,7 @@ class MusicAPP():
 
         self.parent = parent
         self.musicPlayer = MusicPlayer()
+
         self.initUI()
 
     def initUI(self):
@@ -71,7 +72,7 @@ class MusicAPP():
 
         # Parameter selection (channal, samplerate)
         #  - Possible values for channal: 1 ~ 38
-        #  - Recommended values for samplerate: 200 ~ 600
+        #  - Recommended values for sample rate: 200 ~ 600
 
         lbl2 = Label(controllPanel, text="2. Choose channel and sample rate, then press the Play button", font=(None, 13),
                      background=LABELBG)
@@ -144,8 +145,9 @@ class MusicAPP():
 
     def openFile(self):
 
-        self.filePath = askopenfilename(filetypes=(("All Files", "*.*"), ("Text File", "*.txt")),
+        self.filePath = askopenfilename(
                                    title="Choose a brainwave file")
+
         print(self.filePath)
         self.pathlabel.config(text=self.filePath)
 
