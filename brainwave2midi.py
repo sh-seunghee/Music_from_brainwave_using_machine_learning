@@ -7,9 +7,13 @@ This moudle is for translating brainwave to midi music
 	- tested for txt coded brainwave signals.
 	- works but quite messy output
 	- new update with svd denoising (15%)
+	
 	- new update with fourier frequency filter
-	- new update to with bdf/edf format EEG preprocessing (mostly for training purpose)
-	- new update with pitch duration adjustment 
+	- new update with bdf/edf format EEG preprocessing (mostly for training purpose)
+	- new update with pitch duration adjustment
+	-EEG database for training can be found from following website
+		https://dataverse.tdl.org/dataset.xhtml?persistentId=doi:10.18738/T8/EG0LJI
+	
 '''
 
 
