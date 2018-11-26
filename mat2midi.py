@@ -47,7 +47,7 @@ def mat2midi(mat,name,SampleRate):
 	return(out_midi)
 
 
-def piano_roll2midi(mat,outfile,fs):
+def piano_roll2midi(mat,outfile,fs=100):
 	import numpy as np
 	from midiutil.MidiFile import MIDIFile
 	out_midi = MIDIFile(1)
