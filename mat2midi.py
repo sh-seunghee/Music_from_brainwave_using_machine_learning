@@ -1,6 +1,6 @@
 '''
 Author: Zhiyu Yang
-Last modified: 11/02/2018
+Last modified: 11/26/2018
 This moudle converts 2D array from network output into midi file
 	
 	takes a n*m 2D mat as input, where n denotes the number of notes and m denotes range of pitch + duration and channel
