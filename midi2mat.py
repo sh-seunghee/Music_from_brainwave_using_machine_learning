@@ -13,6 +13,10 @@ This moudle is for converting midi file to mat
 	- tested and works for brainwave-midi, need verification for regular midi
 	- tested for regular midi, works but a little weird
 	- for some reason some of the note durations are 0 in the midi file
+	
+	-newupdate with midi to piano roll encoding
+	-takes midi file, smallest time unite (fs) and batch size as input
+	-returns batched piano roll matrices
 '''
 
 import sys
@@ -78,6 +82,25 @@ def midi2mat(filename,upper=88,lower=1):
 		OUTPUT.append(layer)
 	return(OUTPUT)
 
+#################piano roll generatr###########
+#takes midi filename, batch_size  and sample frequency as input, minimum time interval = 1s/fs (default 1/100=0.01s)
+def piano_roll_generator(filename,fs=100,batch_size=200):
+	import pretty_midi
+	import numpy as np
+	data = pretty_midi.PrettyMIDI(filename)
+	PianoRoll = np.array(data.get_piano_roll(fs))
+	data_batch = []
+	for i in range(0,(len(PianoRoll[0])//batch_size)):
+		a = int(i*batch_size)
+		b = int((i+1)*batch_size)
+		tmp = np.zeros([len(PianoRoll),batch_size],)
+		for m in range(0,len(PianoRoll)):
+			k = 0
+			for n in range(a,b):
+				tmp[m][k] = PianoRoll[m][n]
+				k = k+1
+		data_batch.append(tmp)
+	return(data_batch)
 
 #########if run the whole script, output a txt file for EACH TRACK#########
 #highly not recommended, works but so ugly
