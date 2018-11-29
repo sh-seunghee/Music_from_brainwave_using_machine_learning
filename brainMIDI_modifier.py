@@ -47,7 +47,7 @@ def get_notes():
     return notes
 
 def normalize_pitch(notes):
-
+    """normalize the pitch(octave) of note with 2 most frequent pitch to narrow the range of sound"""
     pitch=[]
     normalizedNotes=[]
     # all the octav from note
@@ -80,6 +80,7 @@ def normalize_pitch(notes):
     return normalizedNotes
 
 def major_chord(normalizedNotes):
+    """convert stochastic chord with major chords of 12 keys"""
     majorNotes=[]
 
     #Major chords in all 12 keys
