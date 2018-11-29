@@ -23,6 +23,7 @@ from music_transfer import to_transfer
 
 from subprocess import Popen
 
+from PIL import Image, ImageTk
 
 class MusicAPP():
 
@@ -136,10 +137,11 @@ class MusicAPP():
         self.musicScoreFrame = Frame(self.parent, relief="solid", borderwidth=1, background="white")
         self.musicScoreFrame.pack(side="right", expand="yes", fill="both")
 
-        lbl4 = Label(self.musicScoreFrame, text="Generated music sheet", font=(None, 13), background=self.LABELBG)
-        lbl4.pack(fill='x', pady=5)
+        lbl4 = Label(self.musicScoreFrame, text="Generated music sheet", font=(None, 14), background=self.LABELBG)
+        lbl4.pack(fill='x', pady=10)
 
-
+        self.musicScore_canvas = Canvas(self.musicScoreFrame)
+        self.musicScore_canvas.pack(side=LEFT, expand=YES, fill=BOTH)
 
 
     def openFile(self):
@@ -155,6 +157,9 @@ class MusicAPP():
         if self.midiFilePath == None:
             messagebox.showinfo("ALERT", "Please play the brainwave file first")
         else:
+
+            # Clear the canvas
+            self.musicScore_canvas.delete("all")
 
             # Call music_transfer.py for genre conversion
             classic_fname, jazz_fname = to_transfer(self.midiFilePath, G_AB_classical_1="data/G_AB_classical.pth", G_AB_jazz_1="data/G_AB_jazz.pth")
@@ -175,13 +180,14 @@ class MusicAPP():
             # Show the corresponding music score on the right frame
             self.generateMusicScore(inputMidi=self.genre_converted_music_filePath)
 
-            score_img = PhotoImage(file="output/score-1.png")
-            score_img = score_img.subsample(4)
-            score_label = Label(self.musicScoreFrame, image=score_img)
-            score_label.image = score_img
+            score_img = Image.open("output/score-1.png")
 
-            score_label.place(x=50, y=70)
+            #im_height, im_width = score_img.size
+            #score_img = score_img.resize((im_height // 3, im_width // 3), Image.ANTIALIAS)
+            photoImg = ImageTk.PhotoImage(score_img)
 
+            self.musicScore_canvas.create_image(0, 0, anchor="nw", image=photoImg)
+            self.musicScore_canvas.mainloop()
 
     def stopMusic(self):
 
@@ -191,7 +197,7 @@ class MusicAPP():
 
         generate_score_process = Popen(
             ['/Applications/MuseScore 2.app/Contents/MacOS/mscore', '-I', inputMidi, '-o',
-             'output/score.png'])
+             'output/score.png', '-r', '100'])
         stdout, stderr = generate_score_process.communicate()
 
         # Check err if any
@@ -204,6 +210,10 @@ class MusicAPP():
         sampleRate = self.sampleRate_scaler.get()
 
         try:
+
+            # Clear the canvas
+            self.musicScore_canvas.delete("all")
+
             # Call brainwave2midi.py module with the params to create a melody(in midi format) from the brainwave file
             self.midiFilePath = brainwave_to_melody(_filename=self.bw_filePath, _nChannal=nChannal, _sampleRate=sampleRate)
 
@@ -213,12 +223,15 @@ class MusicAPP():
             # Show the corresponding music score on the right frame
             self.generateMusicScore(inputMidi=self.midiFilePath)
 
+            score_img = Image.open("output/score-1.png")
 
-            score_img = PhotoImage(file="output/score-1.png")
-            score_img = score_img.subsample(4)
-            score_label = Label(self.musicScoreFrame, image=score_img)
-            score_label.image = score_img
-            score_label.place(x=50, y=70)
+            #im_height, im_width = score_img.size
+            #score_img = score_img.resize((im_height // 3, im_width // 3), Image.ANTIALIAS)
+
+            photoImg = ImageTk.PhotoImage(score_img)
+            self.musicScore_canvas.create_image(0, 0, anchor="nw", image=photoImg)
+
+            self.musicScore_canvas.mainloop()
 
         except:
 
@@ -232,7 +245,7 @@ class MusicAPP():
 if __name__ == "__main__":
 
     root = Tk()
-    root.geometry("2500x2000+200+100")
+    root.geometry("1300x2000+100+100")
 
     app = MusicAPP(root)
     root.mainloop()
