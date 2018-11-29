@@ -1,4 +1,4 @@
-'''
+    '''
     Author: Hyeonae Jang
     Last modified: 11/29/2018
     This moudle is to generate parsed notes and chord of music(midi file),
