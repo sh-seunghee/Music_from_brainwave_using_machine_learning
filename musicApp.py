@@ -12,19 +12,17 @@ The module contains following components:
     4. User selects music genre that they want to convert into
     5. Plays a melody with the user defined genre.
 
-    To do;
-    - connect with genre conversion module
-    - add the generated music sheet into the right frame
-
 '''
 
 from tkinter import *
+from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 from musicPlayer import *
 from brainwave2midi import brainwave_to_melody
 from music_transfer import to_transfer
 
-import os
+from subprocess import Popen
+
 
 class MusicAPP():
 
@@ -34,7 +32,11 @@ class MusicAPP():
 
         self.parent = parent
         self.LABELBG = '#b5b5b5'
+
+        self.bw_filePath = None
+        self.midiFilePath = None
         self.user_selected_genre = StringVar()
+
         self.musicPlayer = MusicPlayer()
 
         self.initUI()
@@ -121,46 +123,80 @@ class MusicAPP():
             b = Radiobutton(genre_conversion_frame, text=text, variable=self.user_selected_genre, value=mode, background='#d9d9d9')
             b.pack(anchor='w', padx=25, pady=3)
 
+        self.user_selected_genre.set("jazz")
+
         genreButton = Button(genre_conversion_frame, text="Play", width=23, command=self.genreConversion)
         genreButton.pack(side='left', pady=5)
 
         stopButton = Button(genre_conversion_frame, text="Stop", command=self.stopMusic, width=23)
         stopButton.pack(side='left', fill='x', pady=5)
 
-        # Music Frame ----------------------------------------------
+        # Music score Frame ----------------------------------------------
 
-        self.musicFrame = Frame(self.parent, relief="solid", borderwidth=1, background="white")
-        self.musicFrame.pack(side="right", expand="yes", fill="both")
+        self.musicScoreFrame = Frame(self.parent, relief="solid", borderwidth=1, background="white")
+        self.musicScoreFrame.pack(side="right", expand="yes", fill="both")
 
-        lbl4 = Label(self.musicFrame, text="Generated music sheet", font=(None, 13), background=self.LABELBG)
+        lbl4 = Label(self.musicScoreFrame, text="Generated music sheet", font=(None, 13), background=self.LABELBG)
         lbl4.pack(fill='x', pady=5)
+
+
+
 
     def openFile(self):
 
-        self.filePath = askopenfilename(title="Choose a brainwave file")
+        self.bw_filePath = askopenfilename(title="Choose a brainwave file")
 
-        print("Open brainwave file: "+str(self.filePath))
-        self.pathlabel.config(text=self.filePath)
+        print("Open brainwave file: " + str(self.bw_filePath))
+        self.pathlabel.config(text=self.bw_filePath)
 
 
     def genreConversion(self):
 
-        # Call music_transfer.py for genre conversion
-        classic_fname, jazz_fname = to_transfer(self.midiFilePath, G_AB_classical_1="data/G_AB_classical.pth", G_AB_jazz_1="data/G_AB_jazz.pth")
+        if self.midiFilePath == None:
+            messagebox.showinfo("ALERT", "Please play the brainwave file first")
+        else:
 
-        # Play the generated midi file
-        if self.user_selected_genre.get() == "jazz":
-            print ("Genre converted to Jazz...")
-            self.musicPlayer.playMusic("output/"+jazz_fname+".mid")
+            # Call music_transfer.py for genre conversion
+            classic_fname, jazz_fname = to_transfer(self.midiFilePath, G_AB_classical_1="data/G_AB_classical.pth", G_AB_jazz_1="data/G_AB_jazz.pth")
 
-        elif self.user_selected_genre.get() == "classical":
-            print ("Genre converted to Classical..")
-            self.musicPlayer.playMusic("output/"+classic_fname+".mid")
+            # Play the generated midi file
+            if self.user_selected_genre.get() == "jazz":
+                print ("Genre converted to Jazz...")
+                self.genre_converted_music_filePath = "output/"+jazz_fname+".mid"
+
+
+            elif self.user_selected_genre.get() == "classical":
+                print ("Genre converted to Classical..")
+                self.genre_converted_music_filePath = "output/" + classic_fname + ".mid"
+
+            # Play genre converted music
+            self.musicPlayer.playMusic(self.genre_converted_music_filePath)
+
+            # Show the corresponding music score on the right frame
+            self.generateMusicScore(inputMidi=self.genre_converted_music_filePath)
+
+            score_img = PhotoImage(file="output/score-1.png")
+            score_img = score_img.subsample(4)
+            score_label = Label(self.musicScoreFrame, image=score_img)
+            score_label.image = score_img
+
+            score_label.place(x=50, y=70)
 
 
     def stopMusic(self):
 
         self.musicPlayer.stopMusic()
+
+    def generateMusicScore(self, inputMidi):
+
+        generate_score_process = Popen(
+            ['/Applications/MuseScore 2.app/Contents/MacOS/mscore', '-I', inputMidi, '-o',
+             'output/score.png'])
+        stdout, stderr = generate_score_process.communicate()
+
+        # Check err if any
+        if stderr is not None:
+            print(stderr)
 
     def melodyFromBrainwave(self):
 
@@ -169,21 +205,34 @@ class MusicAPP():
 
         try:
             # Call brainwave2midi.py module with the params to create a melody(in midi format) from the brainwave file
-            self.midiFilePath = brainwave_to_melody(_filename=self.filePath, _nChannal=nChannal, _sampleRate=sampleRate)
+            self.midiFilePath = brainwave_to_melody(_filename=self.bw_filePath, _nChannal=nChannal, _sampleRate=sampleRate)
 
             # Play the generated midi file
             self.musicPlayer.playMusic(self.midiFilePath)
 
+            # Show the corresponding music score on the right frame
+            self.generateMusicScore(inputMidi=self.midiFilePath)
+
+
+            score_img = PhotoImage(file="output/score-1.png")
+            score_img = score_img.subsample(4)
+            score_label = Label(self.musicScoreFrame, image=score_img)
+            score_label.image = score_img
+            score_label.place(x=50, y=70)
+
         except:
 
-            Tk.messagebox.showinfo("ALERT","Wrong file selected:\n"+str(self.filePath)+"\nPlease select the midi formatted file!")
+            if self.bw_filePath is None:
+                messagebox.showinfo("ALERT", "No brainwave file is selected!")
+
+            else:
+                messagebox.showinfo("ALERT","Wrong file selected:\n" + str(self.bw_filePath) + "\nPlease select the midi formatted file!")
 
 
 if __name__ == "__main__":
 
-
     root = Tk()
-    root.geometry("1000x400+200+100")
+    root.geometry("2500x2000+200+100")
 
     app = MusicAPP(root)
     root.mainloop()
