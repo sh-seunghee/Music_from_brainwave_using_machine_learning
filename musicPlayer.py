@@ -36,10 +36,6 @@ class MusicPlayer:
 
         self.music.play()
 
-        while pygame.mixer.music.get_busy():
-
-            # check if playback has finished
-            clock.tick(30)
 
     def stopMusic(self):
 

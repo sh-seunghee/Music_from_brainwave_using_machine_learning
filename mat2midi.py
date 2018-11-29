@@ -80,7 +80,7 @@ def piano_roll2midi(mat,outfile,fs=100):
 				tStart = m*1/fs
 				duration = 0
 			out_midi.addNote(track, channel, pitch, tStart, duration, vol)
-	filename = "../output/"+outfile+".mid"
+	filename = "output/"+outfile+".mid"
 	with open(filename, 'wb') as file:
 	    out_midi.writeFile(file)
 	return(out_midi)
