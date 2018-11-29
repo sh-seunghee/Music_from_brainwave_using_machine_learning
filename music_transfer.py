@@ -1,11 +1,11 @@
 '''
 Author: SolidShen
-Last modified: 11/27/2018
+Last modified: 11/28/2018
 
 This module is for transfering brainwave music into classical and jazz music
 You need to load two params files into function to_transfer G_AB_classical,G_AB_jazz
 filename is the path of input brainwave midi file
-The generated classical and jazz files will be saved in the current dict.
+The generated classical and jazz files named filename_classical and filename_jazz will be saved in the current dict.
 
 '''
 
@@ -18,10 +18,8 @@ import torch
 import numpy as np 
 from mat2midi import piano_roll2midi
 from midi2mat import piano_roll_generator
-from model_v27 import * 
-#from cycleGan.dataset import *
-from utils import *
-#from torch.utils.data import DataLoader
+from cycleGan.model_v27 import * 
+from cycleGan.utils import *
 from torchvision import datasets
 from torch.autograd import Variable
 import torch.nn as nn
@@ -45,11 +43,11 @@ def to_binary(tensor):
 
 
 
-def to_transfer(filename,fs = 10,batch_size = 100,G_AB_classical,G_AB_jazz):
+def to_transfer(filename,G_AB_classical_1,G_AB_jazz_1,fs = 10,batch_size = 100):
 	G_AB_classical = GeneratorResNet(res_blocks=6)
 	G_AB_jazz = GeneratorResNet(res_blocks=6)
-	G_AB_classical.load_state_dict(torch.load(G_AB_classical,map_location='cpu'))
-	G_AB_jazz.load_state_dict(torch.load(G_AB_jazz,map_location='cpu'))
+	G_AB_classical.load_state_dict(torch.load(G_AB_classical_1,map_location='cpu'))
+	G_AB_jazz.load_state_dict(torch.load(G_AB_jazz_1,map_location='cpu'))
 	output = piano_roll_generator(filename,fs=fs,batch_size = batch_size)
 	if len(output)>0:
 		dim = len(output)
@@ -80,9 +78,14 @@ def to_transfer(filename,fs = 10,batch_size = 100,G_AB_classical,G_AB_jazz):
 		style_jazz = style_jazz[:,1:]
 		style_classical = style_classical[:,1:]
 		og = og[:,1:]
-		piano_roll2midi(style_jazz,filename,5) 
+		filename_split = filename.split('/')
+		num = len(filename_split)
+		filename = filename_split[num-1]
+		filename = filename.replace('.mid','')
+		filename_classical = filename + '_classical'
+		filename_jazz = filename + '_jazz'
+		piano_roll2midi(style_jazz,filename_jazz,5) 
 		
-		piano_roll2midi(style_classical,filename,5)
-
+		piano_roll2midi(style_classical,filename_classical,5)
 
 
