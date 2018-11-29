@@ -1,5 +1,5 @@
 '''
-Author: SolidShen
+Author: Guangyu Shen
 Last modified: 11/28/2018
 
 This module is for transfering brainwave music into classical and jazz music
@@ -18,8 +18,8 @@ import torch
 import numpy as np 
 from mat2midi import piano_roll2midi
 from midi2mat import piano_roll_generator
-from cycleGan.model_v27 import * 
-from cycleGan.utils import *
+from model_v27 import * 
+from utils import *
 from torchvision import datasets
 from torch.autograd import Variable
 import torch.nn as nn
