@@ -34,6 +34,7 @@ class MusicAPP():
 
         self.parent = parent
         self.LABELBG = '#b5b5b5'
+        self.user_selected_genre = StringVar()
         self.musicPlayer = MusicPlayer()
 
         self.initUI()
@@ -113,20 +114,17 @@ class MusicAPP():
 
         GENRES = [
             ("Jazz", "jazz"),
-            ("Classic", "classic")
+            ("Classical", "classical")
         ]
 
-        v = StringVar()
-        v.set("jazz") # initialize to Jazz type
-
         for text, mode in GENRES:
-            b = Radiobutton(genre_conversion_frame, text=text, variable=v, value=mode, background='#d9d9d9')
+            b = Radiobutton(genre_conversion_frame, text=text, variable=self.user_selected_genre, value=mode, background='#d9d9d9')
             b.pack(anchor='w', padx=25, pady=3)
 
         genreButton = Button(genre_conversion_frame, text="Play", width=23, command=self.genreConversion)
         genreButton.pack(side='left', pady=5)
 
-        stopButton = Button(genre_conversion_frame, text="Stop", width=23)
+        stopButton = Button(genre_conversion_frame, text="Stop", command=self.stopMusic, width=23)
         stopButton.pack(side='left', fill='x', pady=5)
 
         # Music Frame ----------------------------------------------
@@ -151,7 +149,14 @@ class MusicAPP():
         classic_fname, jazz_fname = to_transfer(self.midiFilePath, G_AB_classical_1="data/G_AB_classical.pth", G_AB_jazz_1="data/G_AB_jazz.pth")
 
         # Play the generated midi file
-        self.musicPlayer.playMusic("output/"+jazz_fname+".mid")
+        if self.user_selected_genre.get() == "jazz":
+            print ("Genre converted to Jazz...")
+            self.musicPlayer.playMusic("output/"+jazz_fname+".mid")
+
+        elif self.user_selected_genre.get() == "classical":
+            print ("Genre converted to Classical..")
+            self.musicPlayer.playMusic("output/"+classic_fname+".mid")
+
 
     def stopMusic(self):
 
