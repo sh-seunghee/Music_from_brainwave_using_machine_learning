@@ -164,16 +164,10 @@ class MusicAPP():
 
         try:
             # Call brainwave2midi.py module with the params to create a melody(in midi format) from the brainwave file
-            midiFile = brainwave_to_melody(_filename=self.filePath, _nChannal=nChannal, _sampleRate=sampleRate)
-            workingDirPath = os.getcwd()
-            self.midiFilePath = os.path.join(workingDirPath, midiFile)
+            self.midiFilePath = brainwave_to_melody(_filename=self.filePath, _nChannal=nChannal, _sampleRate=sampleRate)
 
             # Play the generated midi file
             self.musicPlayer.playMusic(self.midiFilePath)
-
-            #from music21 import converter
-            #s = converter.parseFile(midiFilePath)
-            #s.show()
 
         except:
 

@@ -189,10 +189,10 @@ def brainwave_to_melody(_filename, _nChannal, _sampleRate):
 	for i in range(0,len(nTime)):
 		out_midi.addNote(track, channel, pit[i], tStart[i], duration[i], Vol[i])
 
-	filename = "Brainwave_channal"+str(nChannal+1)+"_SR"+str(SampleRate)+".mid"
-	with open(filename, 'wb') as file:
+	filepath = "output/Brainwave_channal"+str(nChannal+1)+"_SR"+str(SampleRate)+".mid"
+	with open(filepath, 'wb') as file:
 		out_midi.writeFile(file)
 
 	out_midi.close()
 
-	return filename
+	return filepath
