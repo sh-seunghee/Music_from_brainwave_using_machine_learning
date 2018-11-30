@@ -1,29 +1,28 @@
 '''
 Author: Seunghee Lee
-Last modified: 11/01/2018
+Last modified: 11/29/2018
 
 In this script, we use python library TKinter to provide a graphical user interface.
 
 The module contains following components:
 
     1. Inputs recorded brainwave file
-    2. Gets channel and rate values from the user
+    2. Gets an input of a channel and a sample rate value from the user
     3. Plays a reconstructed melody from the brainwave file
     4. User selects music genre that they want to convert into
-    5. Plays a melody with the user defined genre.
+    5. Plays the genre-converted melody
+    6. Shows the music score
 
 '''
 
 from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
+from subprocess import Popen
+from PIL import Image, ImageTk
 from musicPlayer import *
 from brainwave2midi import brainwave_to_melody
 from music_transfer import to_transfer
-
-from subprocess import Popen
-
-from PIL import Image, ImageTk
 
 class MusicAPP():
 
@@ -32,26 +31,26 @@ class MusicAPP():
         super().__init__()
 
         self.parent = parent
-        self.LABELBG = '#b5b5b5'
+        self.LABELBG = '#b5b5b5'                    # The color commonly used for labels in this GUI
 
-        self.bw_filePath = None
-        self.midiFilePath = None
-        self.user_selected_genre = StringVar()
+        self.bw_filePath = None                     # brainwave file path
+        self.midiFilePath = None                    # midi file path
+        self.user_selected_genre = StringVar()      # User-selected genre
 
-        self.musicPlayer = MusicPlayer()
+        self.musicPlayer = MusicPlayer()            # Create an initialize an instance of the MusicPlayer class
 
-        self.initUI()
+        self.initUI()                               # initialize the UI
 
     def initUI(self):
 
+        # Set window title
         self.parent.title("Brainwave to Music Conversion Software")
 
         # Controller Frame -------------------------------------------------------
         self.controllerFrame = Frame(self.parent, borderwidth=0, background='grey', width=300)
         self.controllerFrame.pack(side='left', fill='y')
 
-        # ------------------------------------------------------------------------
-
+        # Sub-frame: File broswer ------------------------------------------------
         filebrowser = Frame(self.controllerFrame, borderwidth=3, background='#d9d9d9')
         filebrowser.pack(fill='x', padx=5, pady=5)
 
@@ -64,22 +63,21 @@ class MusicAPP():
         self.pathlabel = Label(filebrowser, background='grey', width=25)
         self.pathlabel.pack(side='left', pady=5)
 
-        button_browse = Button(filebrowser, text="Browse", width=8, command=self.openFile)
+        button_browse = Button(filebrowser, text="Browse", width=8, command=self.openbwFile)
         button_browse.pack(side='left', fill='x', padx=10, pady=5)
 
-        # ------------------------------------------------------------------------
-
-        controllPanel = Frame(self.controllerFrame, borderwidth=3, background='#d9d9d9')
-        controllPanel.pack(fill='x', padx=5, pady=5)
+        # Sub-frame: Control panel ------------------------------------------------
+        controlPanel = Frame(self.controllerFrame, borderwidth=3, background='#d9d9d9')
+        controlPanel.pack(fill='x', padx=5, pady=5)
 
         # Parameter selection (channal, samplerate)
         #  - Possible values for channal: 1 ~ 38
         #  - Recommended values for sample rate: 200 ~ 600
 
-        lbl2 = Label(controllPanel, text="2. Choose channel and sample rate, then press the Play button", font=(None, 13), background=self.LABELBG)
+        lbl2 = Label(controlPanel, text="2. Choose channel and sample rate, then press the Play button", font=(None, 13), background=self.LABELBG)
         lbl2.pack(fill='x', pady=5)
 
-        channel = Frame(controllPanel)
+        channel = Frame(controlPanel)
         channel.pack(fill='x', pady=1)
 
         lbl_channel = Label(channel, text="Channel", font=(None, 13))
@@ -90,7 +88,7 @@ class MusicAPP():
         self.channal_scaler.config(borderwidth=2)
         self.channal_scaler.pack(side='right', fill='x', padx=5)
 
-        rate = Frame(controllPanel)
+        rate = Frame(controlPanel)
         rate.pack(fill='x', pady=1)
 
         lbl_sampleRate = Label(rate, text="Sample rate", font=(None, 13))
@@ -101,14 +99,13 @@ class MusicAPP():
         self.sampleRate_scaler.configure(borderwidth=2)
         self.sampleRate_scaler.pack(side='right', fill='x', padx=5)
 
-        submitButton = Button(controllPanel, text="Play", command=self.melodyFromBrainwave, width=23)
+        submitButton = Button(controlPanel, text="Play", command=self.melodyFromBrainwave, width=23)
         submitButton.pack(side='left', pady=5)
 
-        stopButton = Button(controllPanel, text="Stop", command=self.stopMusic, width=23)
+        stopButton = Button(controlPanel, text="Stop", command=self.stopMusic, width=23)
         stopButton.pack(side='left', fill='x', pady=5)
 
-        # ------------------------------------------------------------------------
-
+        # Sub-frame: Genre conversion frame ---------------------------------------
         genre_conversion_frame = Frame(self.controllerFrame, background='#d9d9d9')
         genre_conversion_frame.pack(fill='x', padx=5, pady=5)
 
@@ -132,8 +129,7 @@ class MusicAPP():
         stopButton = Button(genre_conversion_frame, text="Stop", command=self.stopMusic, width=23)
         stopButton.pack(side='left', fill='x', pady=5)
 
-        # Music score Frame ----------------------------------------------
-
+        # Music score frame -----------------------------------------------------
         self.musicScoreFrame = Frame(self.parent, relief="solid", borderwidth=1, background="white")
         self.musicScoreFrame.pack(side="right", expand="yes", fill="both")
 
@@ -144,8 +140,9 @@ class MusicAPP():
         self.musicScore_canvas.pack(side=LEFT, expand=YES, fill=BOTH)
 
 
-    def openFile(self):
+    def openbwFile(self):
 
+        # Open the brainwave file
         self.bw_filePath = askopenfilename(title="Choose a brainwave file")
 
         print("Open brainwave file: " + str(self.bw_filePath))
@@ -154,14 +151,14 @@ class MusicAPP():
 
     def genreConversion(self):
 
-        if self.midiFilePath == None:
+        if self.midiFilePath is None:
             messagebox.showinfo("ALERT", "Please play the brainwave file first")
-        else:
 
+        else:
             # Clear the canvas
             self.musicScore_canvas.delete("all")
 
-            # Call music_transfer.py for genre conversion
+            # Call to_transfer in music_transfer.py for genre conversion
             classic_fname, jazz_fname = to_transfer(self.midiFilePath, G_AB_classical_1="data/G_AB_classical.pth", G_AB_jazz_1="data/G_AB_jazz.pth")
 
             # Play the generated midi file
@@ -169,23 +166,19 @@ class MusicAPP():
                 print ("Genre converted to Jazz...")
                 self.genre_converted_music_filePath = "output/"+jazz_fname+".mid"
 
-
             elif self.user_selected_genre.get() == "classical":
                 print ("Genre converted to Classical..")
                 self.genre_converted_music_filePath = "output/" + classic_fname + ".mid"
 
-            # Play genre converted music
+            # Play the genre converted music
             self.musicPlayer.playMusic(self.genre_converted_music_filePath)
 
-            # Show the corresponding music score on the right frame
+            # generate the corresponding music score on the right frame
             self.generateMusicScore(inputMidi=self.genre_converted_music_filePath)
 
+            # show the music score on the music score frame
             score_img = Image.open("output/score-1.png")
-
-            #im_height, im_width = score_img.size
-            #score_img = score_img.resize((im_height // 3, im_width // 3), Image.ANTIALIAS)
             photoImg = ImageTk.PhotoImage(score_img)
-
             self.musicScore_canvas.create_image(0, 0, anchor="nw", image=photoImg)
             self.musicScore_canvas.mainloop()
 
@@ -195,9 +188,12 @@ class MusicAPP():
 
     def generateMusicScore(self, inputMidi):
 
+        # Spawn a new process of generating the music score from the .mid input
         generate_score_process = Popen(
             ['/Applications/MuseScore 2.app/Contents/MacOS/mscore', '-I', inputMidi, '-o',
              'output/score.png', '-r', '100'])
+
+        # Interact with the process
         stdout, stderr = generate_score_process.communicate()
 
         # Check err if any
@@ -206,6 +202,7 @@ class MusicAPP():
 
     def melodyFromBrainwave(self):
 
+        # Get input values from the user
         nChannal = self.channal_scaler.get()
         sampleRate = self.sampleRate_scaler.get()
 
@@ -220,23 +217,19 @@ class MusicAPP():
             # Play the generated midi file
             self.musicPlayer.playMusic(self.midiFilePath)
 
-            # Show the corresponding music score on the right frame
+            # generate the corresponding music score on the right frame
             self.generateMusicScore(inputMidi=self.midiFilePath)
 
+            # show the music score on the music score frame
             score_img = Image.open("output/score-1.png")
-
-            #im_height, im_width = score_img.size
-            #score_img = score_img.resize((im_height // 3, im_width // 3), Image.ANTIALIAS)
-
             photoImg = ImageTk.PhotoImage(score_img)
             self.musicScore_canvas.create_image(0, 0, anchor="nw", image=photoImg)
-
             self.musicScore_canvas.mainloop()
 
         except:
 
             if self.bw_filePath is None:
-                messagebox.showinfo("ALERT", "No brainwave file is selected!")
+                messagebox.showinfo("ALERT", "No brainwave file is inserted!")
 
             else:
                 messagebox.showinfo("ALERT","Wrong file selected:\n" + str(self.bw_filePath) + "\nPlease select the midi formatted file!")

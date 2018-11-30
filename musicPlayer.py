@@ -1,9 +1,9 @@
 '''
 Author: Seunghee Lee
-Last modified: 11/01/2018
+Last modified: 11/29/2018
 
     - This module contains functions for playing music.
-    - It plays a given music file by using the library 'pygame'
+    - It plays a midi file by using the library 'pygame'
 '''
 
 import pygame
@@ -13,6 +13,7 @@ class MusicPlayer:
     def __init__(self):
 
         pygame.init()
+
         self.music = pygame.mixer.music
 
     def playMusic(self, musicFilePath):
@@ -20,11 +21,9 @@ class MusicPlayer:
         '''
         - code references: https://gist.github.com/guitarmanvt/3b6a91cefb2f5c3098ed
 
-        :param musicFilePath: path for midifile
-        :return:
+        :param musicFilePath: a path for .mid file
         '''
 
-        clock = pygame.time.Clock()
         try:
             self.music.load(musicFilePath)
             print("Music file %s loaded!" % musicFilePath)
