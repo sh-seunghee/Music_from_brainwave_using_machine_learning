@@ -11,18 +11,18 @@ import pickle
 import random
 from music21 import converter, instrument, note, chord, stream
 
-def modify_music():
-    initialNotes = get_notes()
+def modify_music(_filepath):
+    filepath=_filepath
+    initialNotes = get_notes(filepath)
     normalizedNotes = normalize_octave(initialNotes)
     majorNotes = major_chord(normalizedNotes)
-    print(majorNotes)
-    create_midi(majorNotes)
+    create_midi(majorNotes,filepath)
 
-def get_notes():
+def get_notes(filepath):
     """ Get all the notes and chords from the midi files in the ./midi directory """
     notes = []
 
-    for file in glob.glob("midi/*.mid"):
+    for file in glob.glob(filepath):
         midi = converter.parse(file)
 
         # excerpt from a midi file that has been read using Music21
@@ -109,7 +109,7 @@ def major_chord(normalizedNotes):
     majorNotes=normalizedNotes
     return majorNotes
 
-def create_midi(outputs):
+def create_midi(outputs, filepath):
     """ convert the output to notes and create a midi file from the notes """
     offset = 0
     output_notes = []
@@ -141,8 +141,6 @@ def create_midi(outputs):
     print(output_notes)
     midi_stream = stream.Stream(output_notes)
 
-    midi_stream.write('midi', fp='output.mid')
+    midi_stream.write('midi', fp=filepath)
 
-if __name__ == '__main__':
-    modify_music()
 
