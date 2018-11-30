@@ -1,5 +1,5 @@
 '''
-author: Guangyu Shen
+Author: Guangyu Shen
 Last modified: 11/30/2018
 
 This module has following componments:
