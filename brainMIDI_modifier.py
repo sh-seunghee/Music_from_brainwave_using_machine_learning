@@ -19,7 +19,7 @@ def modify_music(_filepath):
     create_midi(majorNotes,filepath)
 
 def get_notes(filepath):
-    """ Get all the notes and chords from the midi files in the ./midi directory """
+    """ Get all the notes and chords from the midi files """
     notes = []
 
     for file in glob.glob(filepath):
