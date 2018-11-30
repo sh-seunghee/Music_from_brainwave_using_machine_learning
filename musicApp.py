@@ -14,7 +14,6 @@ The module contains following components:
     6. Shows the music score
 
 '''
-
 from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
@@ -42,7 +41,6 @@ class MusicAPP():
         self.initUI()                               # initialize the UI
 
     def initUI(self):
-
         # Set window title
         self.parent.title("Brainwave to Music Conversion Software")
 
@@ -139,18 +137,14 @@ class MusicAPP():
         self.musicScore_canvas = Canvas(self.musicScoreFrame)
         self.musicScore_canvas.pack(side=LEFT, expand=YES, fill=BOTH)
 
-
     def openbwFile(self):
-
         # Open the brainwave file
         self.bw_filePath = askopenfilename(title="Choose a brainwave file")
 
         print("Open brainwave file: " + str(self.bw_filePath))
         self.pathlabel.config(text=self.bw_filePath)
 
-
     def genreConversion(self):
-
         if self.midiFilePath is None:
             messagebox.showinfo("ALERT", "Please play the brainwave file first")
 
@@ -183,11 +177,9 @@ class MusicAPP():
             self.musicScore_canvas.mainloop()
 
     def stopMusic(self):
-
         self.musicPlayer.stopMusic()
 
     def generateMusicScore(self, inputMidi):
-
         # Spawn a new process of generating the music score from the .mid input
         generate_score_process = Popen(
             ['/Applications/MuseScore 2.app/Contents/MacOS/mscore', '-I', inputMidi, '-o',
@@ -201,13 +193,11 @@ class MusicAPP():
             print(stderr)
 
     def melodyFromBrainwave(self):
-
         # Get input values from the user
         nChannal = self.channal_scaler.get()
         sampleRate = self.sampleRate_scaler.get()
 
         try:
-
             # Clear the canvas
             self.musicScore_canvas.delete("all")
 
@@ -227,13 +217,10 @@ class MusicAPP():
             self.musicScore_canvas.mainloop()
 
         except:
-
             if self.bw_filePath is None:
                 messagebox.showinfo("ALERT", "No brainwave file is inserted!")
-
             else:
                 messagebox.showinfo("ALERT","Wrong file selected:\n" + str(self.bw_filePath) + "\nPlease select the midi formatted file!")
-
 
 if __name__ == "__main__":
 
@@ -242,4 +229,3 @@ if __name__ == "__main__":
 
     app = MusicAPP(root)
     root.mainloop()
-
