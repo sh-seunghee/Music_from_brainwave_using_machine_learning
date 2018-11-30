@@ -2,11 +2,11 @@
 Author: Seunghee Lee
 Last modified: 11/29/2018
 
-In this script, we use python library TKinter to provide a graphical user interface.
+We use python library TKinter to provide a graphical user interface.
 
 The module contains following components:
 
-    1. Inputs recorded brainwave file
+    1. Inputs a recorded brainwave file
     2. Gets an input of a channel and a sample rate value from the user
     3. Plays a reconstructed melody from the brainwave file
     4. User selects music genre that they want to convert into
