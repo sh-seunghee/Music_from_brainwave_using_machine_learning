@@ -1,3 +1,13 @@
+'''
+author: Guangyu Shen
+Last modified: 11/30/2018
+
+This module has following componments:
+
+    1. Define dice_loss function
+'''
+
+
 import torch
 import numpy as np
 import torch.nn.functional as F
