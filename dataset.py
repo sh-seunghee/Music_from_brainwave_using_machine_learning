@@ -1,3 +1,13 @@
+'''
+author: Guangyu Shen
+Last modified: 11/30/2018
+
+This module contains following componment
+    1.Define ImageDataset
+    2.Sample unaligned data from dataset and return a dictionary 
+    3.Calculate the length of dataset
+'''
+
 import glob
 import random
 import os
