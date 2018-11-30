@@ -16,7 +16,6 @@ def modify_music():
     normalizedNotes = normalize_octave(initialNotes)
     majorNotes = major_chord(normalizedNotes)
     print(majorNotes)
-    # create_cycle(majorNotes)
     create_midi(majorNotes)
 
 def get_notes():
@@ -109,21 +108,6 @@ def major_chord(normalizedNotes):
 
     majorNotes=normalizedNotes
     return majorNotes
-
-def create_cycle(notes):
-    key = []
-
-    keyDict={'C':0,'C#':1,'D':2,'E-':3,'E':4,'F':5,'F#':6,'G':7,'G#':8,'A':9,'B-':10,'B':11}
-    # all the keys from note
-    key = [note[:-1] for note in notes if not ('.' in note) or note.isdigit()]
-    #print(key)
-
-    for i in range(len(key)):
-        for k, v in keyDict.items():
-            if key[i]==k:
-                key[i]=v
-    #key.remove('')
-    #print(key)
 
 def create_midi(outputs):
     """ convert the output to notes and create a midi file from the notes """
