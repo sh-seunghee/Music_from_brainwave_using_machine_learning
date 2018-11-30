@@ -2,7 +2,7 @@
     Author: Hyeonae Jang
     Last modified: 11/29/2018
     This moudle is to generate parsed notes and chord of music(midi file),
-    normalize the pitch(octave), convert chord with major chords, and adjust offset(distance between notes)
+    normalize the octave, convert chord with major chords, and adjust offset(distance between notes)
     as a way of generalizing and stylizing raw music
     '''
 
@@ -13,7 +13,7 @@ from music21 import converter, instrument, note, chord, stream
 
 def modify_music():
     initialNotes = get_notes()
-    normalizedNotes = normalize_pitch(initialNotes)
+    normalizedNotes = normalize_octave(initialNotes)
     majorNotes = major_chord(normalizedNotes)
     print(majorNotes)
     # create_cycle(majorNotes)
@@ -46,36 +46,36 @@ def get_notes():
     # notes consist of note and chord
     return notes
 
-def normalize_pitch(notes):
-    """normalize the pitch(octave) of note with 2 most frequent pitch to narrow the range of sound"""
-    pitch=[]
+def normalize_octave(notes):
+    """normalize the octave of note with 2 most frequent octave to narrow the range of sound"""
+    octave=[]
     normalizedNotes=[]
-    # all the octav from note
-    pitch = [note[-1] for note in notes if not ('.' in note) or note.isdigit()]
-    # most frequent octav
+    # all the octave from note
+    octave = [note[-1] for note in notes if not ('.' in note) or note.isdigit()]
+    # most frequent octave
     #octavCnt=Counter(octav)
-    pitchCounts = {p:pitch.count(p) for p in pitch}
-    pitchCounts= sorted(pitchCounts.items(), key=lambda x: x[1],reverse=True)
+    octaveCounts = {o:octave.count(o) for o in octave}
+    octaveCounts= sorted(octaveCounts.items(), key=lambda x: x[1],reverse=True)
 
-    freq_pitch=[]
-    #find 2 most frequent pitch
-    for p in range(0,2):
-        freq_pitch.append(pitchCounts[p][0])
+    freq_octave=[]
+    #find 2 most frequent octave
+    for o in range(0,2):
+        freq_octave.append(octaveCounts[o][0])
 
-    #sorted freq_pitch by converting to int
-    int_freq_pitch=sorted(list(map(int, freq_pitch)))
+    #sorted freq_octave by converting to int
+    int_freq_octave=sorted(list(map(int, freq_octave)))
 
     for i in range(len(notes)):# for note in notes: #--> immutable
         # in case of a note
         if any(j.isalpha() for j in notes[i]):
-            # if the octav is too high or too low
-            if not notes[i][-1] in freq_pitch:
-                # increase the octav
-                if int(notes[i][-1]) < int_freq_pitch[0]:
-                    notes[i] = notes[i][:-1] + str(int_freq_pitch[0])
-                # decrease the octav
+            # if the octave is too high or too low
+            if not notes[i][-1] in freq_octave:
+                # increase the octave
+                if int(notes[i][-1]) < int_freq_octave[0]:
+                    notes[i] = notes[i][:-1] + str(int_freq_octave[0])
+                # decrease the octave
                 else:
-                    notes[i] = notes[i][:-1]+ str(int_freq_pitch[1])
+                    notes[i] = notes[i][:-1]+ str(int_freq_octave[1])
     normalizedNotes=notes
     return normalizedNotes
 
