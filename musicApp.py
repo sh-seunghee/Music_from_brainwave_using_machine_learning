@@ -22,6 +22,7 @@ from PIL import Image, ImageTk
 from musicPlayer import *
 from brainwave2midi import brainwave_to_melody
 from music_transfer import to_transfer
+from brainMIDI_modifier import modify_music
 
 class MusicAPP():
 
@@ -203,7 +204,10 @@ class MusicAPP():
 
             # Call brainwave2midi.py module with the params to create a melody(in midi format) from the brainwave file
             self.midiFilePath = brainwave_to_melody(_filename=self.bw_filePath, _nChannal=nChannal, _sampleRate=sampleRate)
-
+            
+            # Call brainMIDI_modifier.py module to modify and generalize brainwave music 
+            modify_music(_filepath=self.midFilePath)
+            
             # Play the generated midi file
             self.musicPlayer.playMusic(self.midiFilePath)
 
