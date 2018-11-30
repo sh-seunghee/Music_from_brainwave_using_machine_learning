@@ -1,5 +1,5 @@
 '''
-Author: SolidShen
+Author: Guangyu Shen
 Last modified: 11/28/2018
 
 This module is for transfering brainwave music into classical and jazz music
