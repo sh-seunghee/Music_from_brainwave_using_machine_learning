@@ -165,9 +165,6 @@ class MusicAPP():
                 print ("Genre converted to Classical..")
                 self.genre_converted_music_filePath = "output/" + classic_fname + ".mid"
 
-            # Play the genre converted music
-            self.musicPlayer.playMusic(self.genre_converted_music_filePath)
-
             # generate the corresponding music score on the right frame
             self.generateMusicScore(inputMidi=self.genre_converted_music_filePath)
 
@@ -175,6 +172,10 @@ class MusicAPP():
             score_img = Image.open("output/score-1.png")
             photoImg = ImageTk.PhotoImage(score_img)
             self.musicScore_canvas.create_image(0, 0, anchor="nw", image=photoImg)
+
+            # Play the genre converted music
+            self.musicPlayer.playMusic(self.genre_converted_music_filePath)
+
             self.musicScore_canvas.mainloop()
 
     def stopMusic(self):
@@ -206,10 +207,8 @@ class MusicAPP():
             self.midiFilePath = brainwave_to_melody(_filename=self.bw_filePath, _nChannal=nChannal, _sampleRate=sampleRate)
             
             # Call brainMIDI_modifier.py module to modify and generalize brainwave music 
-            modify_music(_filepath=self.midFilePath)
+            #modify_music(_filepath=self.midiFilePath)
             
-            # Play the generated midi file
-            self.musicPlayer.playMusic(self.midiFilePath)
 
             # generate the corresponding music score on the right frame
             self.generateMusicScore(inputMidi=self.midiFilePath)
@@ -218,7 +217,13 @@ class MusicAPP():
             score_img = Image.open("output/score-1.png")
             photoImg = ImageTk.PhotoImage(score_img)
             self.musicScore_canvas.create_image(0, 0, anchor="nw", image=photoImg)
+
+            # Play the generated midi file
+            self.musicPlayer.playMusic(self.midiFilePath)
+
             self.musicScore_canvas.mainloop()
+
+
 
         except:
             if self.bw_filePath is None:

@@ -85,9 +85,8 @@ def to_transfer(filename,G_AB_classical_1 = None,G_AB_jazz_1 = None,fs = 10,batc
         filename = filename.replace('.mid','')
         filename_classical = filename + '_classical'
         filename_jazz = filename + '_jazz'
-        piano_roll2midi(style_jazz,filename_jazz,5)
-		
-        piano_roll2midi(style_classical,filename_classical,5)
+        piano_roll2midi(style_jazz,filename_jazz,3)
+        piano_roll2midi(style_classical,filename_classical,3)
 
     return filename_classical, filename_jazz
 
