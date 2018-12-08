@@ -1,10 +1,10 @@
-    '''
+'''
     Author: Hyeonae Jang
     Last modified: 11/29/2018
     This moudle is to generate parsed notes and chord of music(midi file),
     normalize the octave, convert chord with major chords, and adjust offset(distance between notes)
     as a way of generalizing and stylizing raw music
-    '''
+'''
 
 import glob
 import pickle

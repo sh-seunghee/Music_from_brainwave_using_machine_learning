@@ -207,8 +207,7 @@ class MusicAPP():
             self.midiFilePath = brainwave_to_melody(_filename=self.bw_filePath, _nChannal=nChannal, _sampleRate=sampleRate)
             
             # Call brainMIDI_modifier.py module to modify and generalize brainwave music 
-            #modify_music(_filepath=self.midiFilePath)
-            
+            modify_music(_filepath=self.midiFilePath)
 
             # generate the corresponding music score on the right frame
             self.generateMusicScore(inputMidi=self.midiFilePath)
