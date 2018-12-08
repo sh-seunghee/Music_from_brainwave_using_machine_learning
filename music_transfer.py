@@ -1,6 +1,6 @@
 '''
 Author: Guangyu Shen
-Last modified: 11/28/2018
+Last modified: 12/8/2018
 
 This module is for transfering brainwave music into classical and jazz music
 You need to load two params files into function to_transfer G_AB_classical,G_AB_jazz
@@ -39,55 +39,53 @@ def to_binary(tensor):
 
 
 
-def to_transfer(filename,G_AB_classical_1 = None,G_AB_jazz_1 = None,fs = 10,batch_size = 100):
+def to_transfer(filename,G_AB_classical_1,G_AB_jazz_1,fs = 3,batch_size = 100):
+	G_AB_classical = GeneratorResNet(res_blocks=6)
+	G_AB_jazz = GeneratorResNet(res_blocks=6)
+	G_AB_classical.load_state_dict(torch.load(G_AB_classical_1,map_location='cpu'))
+	G_AB_jazz.load_state_dict(torch.load(G_AB_jazz_1,map_location='cpu'))
+	output = piano_roll_generator(filename,fs=fs,batch_size = batch_size)
+	if len(output)>0:
+		dim = len(output)
+		style_classical = np.zeros([128,1])
+		style_jazz = np.zeros([128,1])
+		og = np.zeros([128,1])
+		for i in range(dim):
+			real_A = output[i]
+			real_A_input = real_A
+			real_A_input[real_A_input != 0] = 127
 
-    G_AB_classical = GeneratorResNet(res_blocks=6)
-    G_AB_jazz = GeneratorResNet(res_blocks=6)
-    G_AB_classical.load_state_dict(torch.load(G_AB_classical_1,map_location='cpu'))
-    G_AB_jazz.load_state_dict(torch.load(G_AB_jazz_1,map_location='cpu'))
-    output = piano_roll_generator(filename,fs=fs,batch_size = batch_size)
+			real_A_tensor = torch.from_numpy(real_A_input)
 
-    filename_classical = ""
-    filename_jazz = ""
+			real_A_tensor = torch.unsqueeze(real_A_tensor,0)
+			real_A_tensor = torch.unsqueeze(real_A_tensor,1).type(torch.FloatTensor)
 
-    if len(output)>0:
-        dim = len(output)
-        style = np.zeros([128,1])
-        og = np.zeros([128,1])
-        for i in range(dim):
-            real_A = output[i]
-            real_A_input = real_A
-            real_A_input[real_A_input != 0] = 127
+			fake_B_classical = torch.squeeze(to_binary(G_AB_classical(real_A_tensor)))
+			fake_B_jazz = torch.squeeze(to_binary(G_AB_jazz(real_A_tensor)))
 
-            real_A_tensor = torch.from_numpy(real_A_input)
+			fake_B_numpy_classical = fake_B_classical.data.numpy()
+			fake_B_numpy_jazz = fake_B_jazz.data.numpy()
 
-            real_A_tensor = torch.unsqueeze(real_A_tensor,0)
-            real_A_tensor = torch.unsqueeze(real_A_tensor,1).type(torch.FloatTensor)
+			
 
-            fake_B_classical = torch.squeeze(to_binary(G_AB_classical(real_A_tensor)))
-            fake_B_jazz = torch.squeeze(to_binary(G_AB_jazz(real_A_tensor)))
-
-            fake_B_numpy_classical = fake_B_classical.data.numpy()
-            fake_B_numpy_jazz = fake_B_jazz.data.numpy()
-
-
-            style_classical = np.concatenate((style,fake_B_numpy_classical),axis = 1)
-            style_jazz = np.concatenate((style,fake_B_numpy_jazz),axis = 1)
-            og = np.concatenate((og,real_A),axis = 1)
-
-
-        style_jazz = style_jazz[:,1:]
-        style_classical = style_classical[:,1:]
-        og = og[:,1:]
-        filename_split = filename.split('/')
-        num = len(filename_split)
-        filename = filename_split[num-1]
-        filename = filename.replace('.mid','')
-        filename_classical = filename + '_classical'
-        filename_jazz = filename + '_jazz'
-        piano_roll2midi(style_jazz,filename_jazz,3)
-        piano_roll2midi(style_classical,filename_classical,3)
-
+			style_classical = np.concatenate((style_classical,fake_B_numpy_classical),axis = 1)
+			style_jazz = np.concatenate((style_jazz,fake_B_numpy_jazz),axis = 1)
+			og = np.concatenate((og,real_A),axis = 1)
+			
+			
+		style_jazz = style_jazz[:,1:]
+		style_classical = style_classical[:,1:]
+		og = og[:,1:]
+		filename_split = filename.split('/')
+		num = len(filename_split)
+		filename = filename_split[num-1]
+		filename = filename.replace('.mid','')
+		filename_classical = filename + '_classical'
+		filename_jazz = filename + '_jazz'
+		piano_roll2midi(style_jazz,filename_jazz,fs) 
+		
+		piano_roll2midi(style_classical,filename_classical,fs)
+        
     return filename_classical, filename_jazz
 
 
